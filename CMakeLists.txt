@@ -2,7 +2,7 @@
 ############ Setup project and cmake
 # Minimum cmake requirement. We should require a quite recent
 # cmake for the dependency find macros etc. to be up to date.
-cmake_minimum_required (VERSION 2.8.8)
+cmake_minimum_required (VERSION 3.20)
 
 ############ Paths
 
@@ -28,6 +28,7 @@ set (WEBSOCKETPP_PATCH_VERSION 2)
 set (WEBSOCKETPP_VERSION ${WEBSOCKETPP_MAJOR_VERSION}.${WEBSOCKETPP_MINOR_VERSION}.${WEBSOCKETPP_PATCH_VERSION})
 
 if(POLICY CMP0048)
+  cmake_policy(SET CMP0048 NEW)
   cmake_policy(GET CMP0048 _version_policy)
 endif()
 
@@ -189,9 +190,9 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
         set (BOOST_ROOT ${BOOST_ROOT} CACHE PATH "BOOST_ROOT dependency path" FORCE)
     endif ()
 
-    message ("* Configuring Boost")
-    message (STATUS "-- Using BOOST_ROOT")
-    message (STATUS "       " ${BOOST_ROOT})
+    # message ("* Configuring Boost")
+    # message (STATUS "-- Using BOOST_ROOT")
+    # message (STATUS "       " ${BOOST_ROOT})
 
     if (MSVC)
         set (Boost_USE_MULTITHREADED TRUE)
@@ -215,27 +216,27 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
     set (Boost_USE_MULTITHREADED TRUE)
     set (Boost_ADDITIONAL_VERSIONS "1.39.0" "1.40.0" "1.41.0" "1.42.0" "1.43.0" "1.44.0" "1.46.1") # todo: someone who knows better spesify these!
 
-    find_package (Boost 1.39.0 COMPONENTS "${WEBSOCKETPP_BOOST_LIBS}")
+    find_package (Boost 1.39.0 COMPONENTS ${WEBSOCKETPP_BOOST_LIBS})
 
     if (Boost_FOUND)
         # Boost is a project wide global dependency.
         include_directories (${Boost_INCLUDE_DIRS})
         link_directories (${Boost_LIBRARY_DIRS})
 
-        # Pretty print status
-        message (STATUS "-- Include Directories")
-        foreach (include_dir ${Boost_INCLUDE_DIRS})
-            message (STATUS "       " ${include_dir})
-        endforeach ()
-        message (STATUS "-- Library Directories")
-        foreach (library_dir ${Boost_LIBRARY_DIRS})
-            message (STATUS "       " ${library_dir})
-        endforeach ()
-        message (STATUS "-- Libraries")
-        foreach (boost_lib ${Boost_LIBRARIES})
-            message (STATUS "       " ${boost_lib})
-        endforeach ()
-        message ("")
+        # # Pretty print status
+        # message (STATUS "-- Include Directories")
+        # foreach (include_dir ${Boost_INCLUDE_DIRS})
+        #     message (STATUS "       " ${include_dir})
+        # endforeach ()
+        # message (STATUS "-- Library Directories")
+        # foreach (library_dir ${Boost_LIBRARY_DIRS})
+        #     message (STATUS "       " ${library_dir})
+        # endforeach ()
+        # message (STATUS "-- Libraries")
+        # foreach (boost_lib ${Boost_LIBRARIES})
+        #     message (STATUS "       " ${boost_lib})
+        # endforeach ()
+        # message ("")
     else ()
         message (FATAL_ERROR "Failed to find required dependency: boost")
     endif ()
@@ -259,7 +260,7 @@ if (BUILD_TESTS)
     include_subdirs ("test")
 endif ()
 
-print_used_build_config()
+# print_used_build_config()
 
 export (PACKAGE websocketpp)
 
