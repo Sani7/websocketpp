@@ -113,6 +113,10 @@ public:
         m_out = out;
     }
 
+    void set_custom(bool custom) {
+        m_custom = custom;
+    }
+
     void set_channels(level channels) {
         if (channels == names::none) {
             clear_channels(names::all);
@@ -136,9 +140,14 @@ public:
     void write(level channel, std::string const & msg) {
         scoped_lock_type lock(m_lock);
         if (!this->dynamic_test(channel)) { return; }
-        *m_out << "[" << timestamp << "] "
-                  << "[" << names::channel_name(channel) << "] "
-                  << msg << "\n";
+        if (m_custom) {
+            *m_out << "[" << names::channel_name(channel) << "] "
+                << msg << "\n";
+        } else {
+            *m_out << "[" << timestamp << "] "
+                << "[" << names::channel_name(channel) << "] "
+                << msg << "\n";
+        }
         m_out->flush();
     }
 
@@ -150,9 +159,14 @@ public:
     void write(level channel, char const * msg) {
         scoped_lock_type lock(m_lock);
         if (!this->dynamic_test(channel)) { return; }
-        *m_out << "[" << timestamp << "] "
-                  << "[" << names::channel_name(channel) << "] "
-                  << msg << "\n";
+        if (m_custom) {
+            *m_out << "[" << names::channel_name(channel) << "] "
+                << msg << "\n";
+        } else {
+            *m_out << "[" << timestamp << "] "
+                << "[" << names::channel_name(channel) << "] "
+                << msg << "\n";
+        }
         m_out->flush();
     }
 
@@ -190,6 +204,7 @@ private:
     level const m_static_channels;
     level m_dynamic_channels;
     std::ostream * m_out;
+    bool m_custom = true;
 };
 
 } // log
